@@ -2,4 +2,4 @@
 
 Coded in Rust
 
-File named "main.rs" is the source file, and the File named "hello-world.exe" is the executable for the program
+File named "main.rs" is the source file, and the File named "hello-rust.exe" is the executable for the program
