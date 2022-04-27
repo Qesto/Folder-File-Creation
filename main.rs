@@ -32,12 +32,22 @@ fn menu_options(changed_path:String, mut exit_value:bool) -> bool {
             std::io::stdout().flush().unwrap();
             std::io::stdin().read_line(&mut folder_name).unwrap();
             folder_name = folder_name.trim().to_string();
+            if folder_name.is_empty()
+            {
+                println!("Error: Folder Name can not be left blank!");
+                continue;
+            }
     
             let mut file_name = String::new();
             print!(" Enter File Name with desired Extension:\n     ");
             std::io::stdout().flush().unwrap();
             std::io::stdin().read_line(&mut file_name).unwrap();
             file_name = file_name.trim().to_string();
+            if file_name.is_empty()
+            {
+                println!("Error: File Name can not be left blank!");
+                continue;
+            }
     
             let mut file_text = String::new();
             print!(" Enter the text you would like to write into the File (for a new line enter in 3 spaces):\n     ");
@@ -56,6 +66,11 @@ fn menu_options(changed_path:String, mut exit_value:bool) -> bool {
             std::io::stdout().flush().unwrap();
             std::io::stdin().read_line(&mut file_name).unwrap();
             file_name = file_name.trim().to_string();
+            if file_name.is_empty()
+            {
+                println!("Error: File Name can not be left blank!");
+                continue;
+            }
     
             let mut file_text = String::new();
             print!(" Enter the text you would like to write into the File (for a new line enter in 3 spaces):\n     ");
@@ -64,7 +79,8 @@ fn menu_options(changed_path:String, mut exit_value:bool) -> bool {
             file_text = file_text.trim().to_string();
             file_text = new_line_or_naw(file_text);
 
-            file_write(path, file_name, file_text);
+            let res_write = String::from("Write");
+            basically_error_checker_and_file_creation(res_write, path, file_name, file_text);
         }
         else if input_option == String::from("3")
         {
@@ -76,10 +92,15 @@ fn menu_options(changed_path:String, mut exit_value:bool) -> bool {
             path = path_syntax_error_checker(path);
             
             let mut file_name = String::new();
-            print!(" Enter the File name with the extension you would like to read:\n     ");
+            print!(" Enter the File Name with the extension you would like to read:\n     ");
             std::io::stdout().flush().unwrap();
             std::io::stdin().read_line(&mut file_name).unwrap();
             file_name = file_name.trim().to_string();
+            if file_name.is_empty()
+            {
+                println!("Error: File Name can not be left empty!");
+                continue;
+            }
             
             let res_read = String::from("Read");
             basically_error_checker_and_read_file(res_read, path, file_name);
@@ -127,10 +148,11 @@ fn create_dir_with_file(name_of_path:String, name_of_folder:String, name_of_file
     Ok(())
 }
 
-fn file_write(name_of_path:String, name_of_file:String, text_of_file:String) {
+fn file_write(name_of_path:String, name_of_file:String, text_of_file:String) -> std::io::Result<()> {
     let mut file = std::fs::File::create(name_of_path + &name_of_file).expect("create failed");
     file.write_all(text_of_file.as_bytes()).expect("write failed");
     println!("\n Write Successful!\n");
+    Ok(())
 }
 
 fn file_read(name_of_path:String, name_of_file:String) -> std::io::Result<()> {
@@ -187,6 +209,14 @@ fn path_syntax_error_checker(mut name_of_path:String) -> String {
 
 fn basically_error_checker_and_folder_file_creation(res_of:String, name_of_path:String, name_of_folder:String, name_of_file:String, text_of_file:String) {
     let res = create_dir_with_file(name_of_path, name_of_folder, name_of_file, text_of_file);
+    if let Err(e) = res
+    {
+        println!("Error in {}: {}", res_of, e);
+    }
+}
+
+fn basically_error_checker_and_file_creation(res_of:String, name_of_path:String, name_of_file:String, text_of_file:String) {
+    let res = file_write(name_of_path, name_of_file, text_of_file);
     if let Err(e) = res
     {
         println!("Error in {}: {}", res_of, e);
