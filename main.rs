@@ -135,10 +135,10 @@ fn file_write(name_of_path:String, name_of_file:String, text_of_file:String) {
 
 fn file_read(name_of_path:String, name_of_file:String) -> std::io::Result<()> {
     let mut file = std::fs::File::open((*name_of_path).to_string() + &name_of_file).expect("open failed");
-    let mut line = String::new();
+    let mut line = Vec::new();
     print!("\n Reading File: '{}' in Path: '{}'\n ---------------------------------------------\n", &name_of_file, &name_of_path);
-    file.read_to_string(&mut line)?;
-    println!("{}", line);
+    file.read_to_end(&mut line)?;
+    println!("{}", line.iter().map(|&x| x as u8).map(|x| x as char).collect::<String>());
     Ok(())
 }
 
